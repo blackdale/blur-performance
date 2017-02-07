@@ -1,0 +1,88 @@
+[
+    {
+        "outputFile": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\build\\intermediates\\res\\merged\\debug\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 56,
+                    "endOffset": 107
+                },
+                "from": {
+                    "file": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 738,
+                        "endColumn": 56,
+                        "endOffset": 790
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 112,
+                    "endColumn": 55,
+                    "endOffset": 163
+                },
+                "from": {
+                    "file": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 682,
+                        "endColumn": 55,
+                        "endOffset": 733
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "outputFile": "C:\\Dev\\blur-performance\\app\\build\\intermediates\\res\\merged\\debug\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 56,
+                    "endOffset": 107
+                },
+                "from": {
+                    "file": "C:\\Dev\\blur-performance\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 738,
+                        "endColumn": 56,
+                        "endOffset": 790
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 112,
+                    "endColumn": 55,
+                    "endOffset": 163
+                },
+                "from": {
+                    "file": "C:\\Dev\\blur-performance\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 682,
+                        "endColumn": 55,
+                        "endOffset": 733
+                    }
+                }
+            }
+        ]
+    }
+]
