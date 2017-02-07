@@ -1,9 +1,5 @@
 [
     {
-        "merged": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\build\\intermediates\\res\\merged\\debug\\layout\\main.xml",
-        "source": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\src\\main\\res\\layout\\main.xml"
-    },
-    {
         "merged": "C:\\Dev\\blur-performance\\app\\build\\intermediates\\res\\merged\\debug\\layout\\main.xml",
         "source": "C:\\Dev\\blur-performance\\app\\src\\main\\res\\layout\\main.xml"
     }

@@ -16,7 +16,7 @@
 -->
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.opengl"
+    package="com.example.android.blurperfmormance"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -32,7 +32,7 @@
             android:label="@string/app_name"
             android:allowBackup="true" >
         <activity
-                android:name="com.example.android.opengl.OpenGLES20Activity"
+                android:name="com.example.android.blurperfmormance.BlurActivity"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
                 android:label="@string/app_name" >
             <intent-filter>

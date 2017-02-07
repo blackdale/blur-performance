@@ -1,15 +1,7 @@
 [
     {
-        "merged": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\ic_launcher.png",
-        "source": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\src\\main\\res\\drawable\\ic_launcher.png"
-    },
-    {
         "merged": "C:\\Dev\\blur-performance\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\image.jpg",
         "source": "C:\\Dev\\blur-performance\\app\\src\\main\\res\\drawable\\image.jpg"
-    },
-    {
-        "merged": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\image.jpg",
-        "source": "D:\\Work\\Sophia\\VR\\gvr-android-sdk\\ndk\\demos\\HelloOpenGLES201\\app\\src\\main\\res\\drawable\\image.jpg"
     },
     {
         "merged": "C:\\Dev\\blur-performance\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\ic_launcher.png",
