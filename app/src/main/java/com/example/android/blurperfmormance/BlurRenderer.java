@@ -107,7 +107,7 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
         int width = size.x;
         int height = size.y;
 
-        mBlurSquare = new BlurSquare(mContext, width, height);
+        mBlurSquare = new BlurSquareTwoPassesLinearSampling(mContext, width, height);
 
         mAnimationStart = System.currentTimeMillis();
 
@@ -133,7 +133,7 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
                 mAnimationStart = System.currentTimeMillis();
 
             // Draw square
-            mBlurSquare.draw(interpolationValue);
+            mBlurSquare.draw(1.0f/*interpolationValue*/);
 
             printFPS();
 
