@@ -38,6 +38,7 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
     private boolean mDone;
     private Context mContext;
     private BlurSquare mBlurSquare;
+    private BlurSquare[] mBlurSquares;
     private long mStartTime = 0;
     private long mFrameCounter = 0;
     private long mAnimationDuration = 3000;
@@ -90,6 +91,13 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
         Log.d(TAG, "Renderer thread exiting");
     }
 
+    Point getScreenDimentions() {
+        Display display = ((Activity)mContext).getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
     /**
      * Draws updates as fast as the system will allow.
      * <p>
@@ -101,13 +109,13 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
      * of vsync, but that's not nearly as much fun.
      */
     private void doAnimation(WindowSurface eglSurface) {
-        Display display = ((Activity)mContext).getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
+        Point size = getScreenDimentions();
 
-        mBlurSquare = new BlurSquareTwoPassesLinearSampling(mContext, width, height);
+        mBlurSquares = new BlurSquare[3];
+        mBlurSquares[0] = new BlurSquareTwoPasses(mContext, size);
+        mBlurSquares[1] = new BlurSquareTwoPassesLinearSampling(mContext, size);
+        mBlurSquares[2] = new BlurSquareMipmap(mContext, size);
+        mBlurSquare = mBlurSquares[0];
 
         mAnimationStart = System.currentTimeMillis();
 
@@ -121,24 +129,31 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
                 }
             }
 
-            // Still alive, render a frame.
             GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-            long currentTime = System.currentTimeMillis();
-            float interpolationValue = (float)(currentTime - mAnimationStart) / (float)mAnimationDuration;
-            if (interpolationValue > 1.0 && interpolationValue < 2.0)
-                interpolationValue = 2.0f - interpolationValue;
-            else if (interpolationValue > 2.0)
-                mAnimationStart = System.currentTimeMillis();
+            float interpolationValue = getInterpolationValue();
 
-            // Draw square
-            mBlurSquare.draw(1.0f/*interpolationValue*/);
+            synchronized (mLock) {
+                mBlurSquare.draw(interpolationValue);
+            }
 
             printFPS();
 
             eglSurface.swapBuffers();
         }
+    }
+
+    private float getInterpolationValue() {
+        long currentTime = System.currentTimeMillis();
+        float interpolationValue = (float)(currentTime - mAnimationStart) / (float)mAnimationDuration;
+        if (interpolationValue > 1.0 && interpolationValue < 2.0)
+            interpolationValue = 2.0f - interpolationValue;
+        else if (interpolationValue > 2.0) {
+            mAnimationStart = System.currentTimeMillis();
+            interpolationValue = 0.0f;
+        }
+        return interpolationValue;
     }
 
     private void printFPS() {
@@ -204,6 +219,11 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
 
     @Override   // will be called on UI thread
     public void onSurfaceTextureUpdated(SurfaceTexture st) {
-        //Log.d(TAG, "onSurfaceTextureUpdated");
+    }
+
+    public void changeBlurAlgorithm(int index) {
+        synchronized (mLock) {
+            mBlurSquare = mBlurSquares[index % mBlurSquares.length];
+        }
     }
 }

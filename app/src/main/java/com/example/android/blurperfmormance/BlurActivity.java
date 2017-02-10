@@ -17,7 +17,9 @@ package com.example.android.blurperfmormance;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.TextureView;
+import android.view.View;
 
 public class BlurActivity extends Activity {
 
@@ -33,6 +35,17 @@ public class BlurActivity extends Activity {
         mTextureView = new TextureView(this);
         mTextureView.setSurfaceTextureListener(mRenderer);
         setContentView(mTextureView);
+
+        mTextureView.setOnTouchListener(new View.OnTouchListener() {
+            private int mIndex = 0;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() != MotionEvent.ACTION_UP)
+                    return true;
+                mRenderer.changeBlurAlgorithm(++mIndex);
+                return true;
+            }
+        });
     }
 
     @Override
