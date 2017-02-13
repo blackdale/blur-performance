@@ -3,9 +3,9 @@ package com.example.android.blurperfmormance;
 import android.content.Context;
 import android.graphics.Point;
 
-public class BlurSquareSixPasses extends BlurSquare {
+public class BlurSquareMipmap extends BlurSquare {
 
-    private final static float MAX_BLUR_RADIUS_DEFAULT = 5.0f;
+    private final static float MAX_BLUR_RADIUS_DEFAULT = 7.0f;
 
     final private String vertexShaderCode =
             "#version 300 es\n"+
@@ -14,10 +14,12 @@ public class BlurSquareSixPasses extends BlurSquare {
             "in vec2 aTexCoord;\n" +
             "out vec2 vTexCoord;\n" +
             "out float vWeight[16];\n" +
-            "uniform float uMipLevel;\n" +
+            "uniform float uCount;\n" +
             "uniform float uRadius;\n" +
             "uniform float uWidth;\n" +
             "uniform float uHeight;\n" +
+            "out float vCount;\n" +
+            "out float vRadius;\n" +
             "out float vWidthOffset;\n" +
             "out float vHeightOffset;\n" +
 
@@ -27,7 +29,7 @@ public class BlurSquareSixPasses extends BlurSquare {
             "    float sigma = (float(r) + 1.0) / sqrt(2.0 * log(255.0));\n" +
             "    float sumOfWeights = 0.0;\n" +
             "    for (int i = 0; i < r + 1; i++) {\n" +
-            "        vWeight[i] = (1.0 / sqrt(2.0 * 3.14 * float(sigma * sigma))) * exp(-float(i * i) / (2.0 * float(sigma * sigma)));\n" +
+            "        vWeight[i] = (1.0 / sqrt(2.0 * 3.14 * pow(sigma, 2.0))) * exp(-pow(float(i), 2.0) / (2.0 * pow(sigma, 2.0)));\n" +
             "        if (i == 0) {\n" +
             "            sumOfWeights += vWeight[i];\n" +
             "        } else {\n" +
@@ -43,16 +45,19 @@ public class BlurSquareSixPasses extends BlurSquare {
             "{\n" +
             "    vTexCoord = aTexCoord;\n" +
             "    gl_Position = aPosition;\n" +
-            "    vWidthOffset = uRadius / uWidth;\n" +
-            "    vHeightOffset = uRadius / uHeight;\n" +
+            "    vWidthOffset = pow(2.0, uCount) / uWidth;\n" +
+            "    vHeightOffset = pow(2.0, uCount) / uHeight;\n" +
             "    calculateWeights(" + MAX_BLUR_RADIUS_DEFAULT + ");\n" +
+            "    vCount = uCount;\n" +
+            "    vRadius = uRadius;\n" +
             "}";
 
     final private String horFragmentShaderCode =
             "#version 300 es\n"+
             "precision mediump float;\n" +
             "uniform sampler2D uTexture;\n" +
-            "uniform float uRadius;\n" +
+            "in float vCount;\n" +
+            "in float vRadius;\n" +
             "in float vWeight[16];\n" +
             "in vec2 vTexCoord;\n" +
             "in float vWidthOffset;\n" +
@@ -76,10 +81,11 @@ public class BlurSquareSixPasses extends BlurSquare {
             "#version 300 es\n"+
             "precision mediump float;\n" +
             "uniform sampler2D uTexture;\n" +
-            "uniform float uRadius;\n" +
             "uniform float saturation;\n" +
 
             "in vec2 vTexCoord;\n" +
+            "in float vCount;\n" +
+            "in float vRadius;\n" +
             "in float vWeight[16];" +
             "in float vWidthOffset;\n" +
             "in float vHeightOffset;\n" +
@@ -90,14 +96,14 @@ public class BlurSquareSixPasses extends BlurSquare {
             "{\n" +
             "    vec4 color = vec4(0.0);\n" +
             "    for (int i = 1; i <= int(" + MAX_BLUR_RADIUS_DEFAULT + "); i++) {\n" +
-            "       color += texture(uTexture, vTexCoord + vec2(0.0, float(i) * vHeightOffset)) * vWeight[i];\n" +
-            "       color += texture(uTexture, vTexCoord - vec2(0.0, float(i) * vHeightOffset)) * vWeight[i];\n" +
+            "       color += textureLod(uTexture, vTexCoord + vec2(0.0, float(i) * vHeightOffset), vCount) * vWeight[i];\n" +
+            "       color += textureLod(uTexture, vTexCoord - vec2(0.0, float(i) * vHeightOffset), vCount) * vWeight[i];\n" +
             "    }\n"+
-            "    color += texture(uTexture, vTexCoord) * vWeight[0];\n" +
+            "    color += textureLod(uTexture, vTexCoord, vCount) * vWeight[0];\n" +
             "    glFragColor = color;\n" +
             "}";
 
-    public BlurSquareSixPasses(Context context, Point size) {
+    public BlurSquareMipmap(Context context, Point size) {
         super(context, size);
     }
 
@@ -114,10 +120,5 @@ public class BlurSquareSixPasses extends BlurSquare {
     @Override
     public String getVerticalFragmentShaderCode() {
         return verFragmentShaderCode;
-    }
-
-    @Override
-    protected boolean isMultiPass() {
-        return true;
     }
 }

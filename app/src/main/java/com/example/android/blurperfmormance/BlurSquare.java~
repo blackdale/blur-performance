@@ -31,9 +31,6 @@ public abstract class BlurSquare {
         public int mFbo;
     }
 
-    private int[] mFbos = new int[3];
-    private int[] mTextureDataHandlers = new int[3];
-
     private ProgramData mVerticalProgramData = new ProgramData();
     private ProgramData mHorizontalProgramData = new ProgramData();
     Point mSize;
@@ -61,14 +58,11 @@ public abstract class BlurSquare {
     public abstract String getHorizontalFragmentShaderCode();
     public abstract String getVerticalFragmentShaderCode();
 
-    protected boolean isMultiPass() {
-        return false;
-    }
-
     public BlurSquare(Context context, Point size) {
         mContext = context;
         prepareBuffers();
         preparePrograms();
+        prepareTexture();
         mSize = size;
         prepareFbo();
     }
@@ -111,7 +105,7 @@ public abstract class BlurSquare {
         mHorizontalProgramData.mWidthHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uWidth");
         mHorizontalProgramData.mHeightHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uHeight");
         mHorizontalProgramData.mRadiusHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uRadius");
-        mHorizontalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uMipLevel");
+        mHorizontalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uCount");
         mHorizontalProgramData.mTextureHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uTexture");
 
         GLES31.glUseProgram(mVerticalProgramData.mProgram);
@@ -120,8 +114,12 @@ public abstract class BlurSquare {
         mVerticalProgramData.mWidthHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uWidth");
         mVerticalProgramData.mHeightHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uHeight");
         mVerticalProgramData.mRadiusHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uRadius");
-        mVerticalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uMipLevel");
+        mVerticalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uCount");
         mVerticalProgramData.mTextureHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uTexture");
+    }
+
+    private void prepareTexture() {
+        mVerticalProgramData.mTextureDataHandle = loadTexture(mContext, R.drawable.image);
     }
 
     private void prepareBuffers() {
@@ -145,28 +143,25 @@ public abstract class BlurSquare {
     }
 
     private void prepareFbo() {
-        for (int i = 0; i < mFbos.length - 1; ++i) {
-            int[] fbo = new int[1];
-            GLES31.glGenFramebuffers(1, fbo, 0);
-            GLES31.glBindFramebuffer(GLES31.GL_FRAMEBUFFER, fbo[0]);
+        int[] fbo = new int[1];
+        GLES31.glGenFramebuffers(1, fbo, 0);
+        GLES31.glBindFramebuffer(GLES31.GL_FRAMEBUFFER, fbo[0]);
+        mVerticalProgramData.mFbo = fbo[0];
 
-            int[] texture = new int[1];
-            GLES31.glGenTextures(1, texture, 0);
-            GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, texture[0]);
-            GLES31.glTexImage2D(GLES31.GL_TEXTURE_2D, 0, GLES31.GL_RGB, (int) mSize.x, (int) mSize.y, 0, GLES31.GL_RGB, GLES31.GL_UNSIGNED_BYTE, null);
+        int[] texture = new int[1];
+        GLES31.glGenTextures(1, texture, 0);
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, texture[0]);
+        GLES31.glTexImage2D(GLES31.GL_TEXTURE_2D, 0, GLES31.GL_RGB, (int)mSize.x, (int)mSize.y, 0, GLES31.GL_RGB, GLES31.GL_UNSIGNED_BYTE, null);
+        mHorizontalProgramData.mTextureDataHandle = texture[0];
 
-            GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_MIN_FILTER, GLES31.GL_LINEAR);
-            GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_MAG_FILTER, GLES31.GL_LINEAR);
-            GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_WRAP_S, GLES31.GL_CLAMP_TO_EDGE);
-            GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_WRAP_T, GLES31.GL_CLAMP_TO_EDGE);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_MIN_FILTER, GLES31.GL_LINEAR);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_MAG_FILTER, GLES31.GL_LINEAR);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_WRAP_S, GLES31.GL_CLAMP_TO_EDGE);
+        GLES31.glTexParameteri(GLES31.GL_TEXTURE_2D, GLES31.GL_TEXTURE_WRAP_T, GLES31.GL_CLAMP_TO_EDGE);
 
-            GLES31.glFramebufferTexture2D(GLES31.GL_FRAMEBUFFER, GLES31.GL_COLOR_ATTACHMENT0, GLES31.GL_TEXTURE_2D, texture[0], 0);
+        GLES31.glFramebufferTexture2D(GLES31.GL_FRAMEBUFFER, GLES31.GL_COLOR_ATTACHMENT0, GLES31.GL_TEXTURE_2D, texture[0], 0);
 
-            mFbos[i] = fbo[0];
-            mTextureDataHandlers[i + 1] = texture[0];
-        }
-        mTextureDataHandlers[0] = loadTexture(mContext, R.drawable.image);
-        mFbos[mFbos.length - 1] = 0;
+        mHorizontalProgramData.mFbo = 0;
     }
 
     private int loadTexture(final Context context, final int resourceId)
@@ -241,29 +236,7 @@ public abstract class BlurSquare {
     }
 
     public void draw(float interpolationValue) {
-        mVerticalProgramData.mFbo = mFbos[0];
-        mVerticalProgramData.mTextureDataHandle = mTextureDataHandlers[0];
         draw(mVerticalProgramData, interpolationValue);
-
-        if (isMultiPass()) {
-            mHorizontalProgramData.mFbo = mFbos[1];
-            mHorizontalProgramData.mTextureDataHandle = mTextureDataHandlers[1];
-            draw(mHorizontalProgramData, interpolationValue);
-
-            mVerticalProgramData.mFbo = mFbos[0];
-            mVerticalProgramData.mTextureDataHandle = mTextureDataHandlers[2];
-            draw(mVerticalProgramData, interpolationValue);
-            mHorizontalProgramData.mFbo = mFbos[1];
-            mHorizontalProgramData.mTextureDataHandle = mTextureDataHandlers[1];
-            draw(mHorizontalProgramData, interpolationValue);
-
-
-            mVerticalProgramData.mFbo = mFbos[0];
-            mVerticalProgramData.mTextureDataHandle = mTextureDataHandlers[2];
-            draw(mVerticalProgramData, interpolationValue);
-        }
-        mHorizontalProgramData.mFbo = mFbos[2];
-        mHorizontalProgramData.mTextureDataHandle = mTextureDataHandlers[1];
         draw(mHorizontalProgramData, interpolationValue);
     }
 }
