@@ -111,10 +111,12 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
     private void doAnimation(WindowSurface eglSurface) {
         Point size = getScreenDimentions();
 
-        mBlurSquares = new BlurSquare[3];
+        mBlurSquares = new BlurSquare[5];
         mBlurSquares[0] = new BlurSquareTwoPasses(mContext, size);
-        mBlurSquares[1] = new BlurSquareTwoPassesLinearSampling(mContext, size);
-        mBlurSquares[2] = new BlurSquareMipmap(mContext, size);
+        mBlurSquares[1] = new BlurSquareSixPasses(mContext, size);
+        mBlurSquares[2] = new BlurSquareTwoPassesLinearSampling(mContext, size);
+        mBlurSquares[3] = new BlurSquareSixPassesLinearSampling(mContext, size);
+        mBlurSquares[4] = new BlurSquareMipmap(mContext, size);
         mBlurSquare = mBlurSquares[0];
 
         mAnimationStart = System.currentTimeMillis();
@@ -135,12 +137,12 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
             float interpolationValue = getInterpolationValue();
 
             synchronized (mLock) {
-                mBlurSquare.draw(/*interpolationValue*/1.0f);
+                mBlurSquare.draw(interpolationValue);
             }
 
-            printFPS();
-
             eglSurface.swapBuffers();
+
+            printFPS();
         }
     }
 
@@ -153,16 +155,18 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
             mAnimationStart = System.currentTimeMillis();
             interpolationValue = 0.0f;
         }
-        return interpolationValue;
+//        return interpolationValue;
+        return 1.0f;
     }
 
     private void printFPS() {
         mFrameCounter++;
-        if (mFrameCounter % 60 == 0) {
+        if (System.nanoTime() - mStartTime > 1000000000) {
             long duration = System.nanoTime() - mStartTime;
-            Log.d("Blur", "FPS: " + 60.0 * 1000000000.0 / (float)duration);
+            Log.d("Blur", "FPS: " + mFrameCounter * 1000000000.0 / (float)duration);
 
             mStartTime = System.nanoTime();
+            mFrameCounter = 0;
         }
     }
 

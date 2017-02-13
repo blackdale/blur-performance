@@ -1,20 +1,11 @@
 package com.example.android.blurperfmormance;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.opengl.GLES31;
-import android.opengl.GLUtils;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+public class BlurSquareSixPasses extends BlurSquare {
 
-public class BlurSquareTwoPasses extends BlurSquare {
-
-    private final static float MAX_BLUR_RADIUS_DEFAULT = 15.0f;
+    private final static float MAX_BLUR_RADIUS_DEFAULT = 5.0f;
 
     final private String vertexShaderCode =
             "#version 300 es\n"+
@@ -106,7 +97,7 @@ public class BlurSquareTwoPasses extends BlurSquare {
             "    glFragColor = color;\n" +
             "}";
 
-    public BlurSquareTwoPasses(Context context, Point size) {
+    public BlurSquareSixPasses(Context context, Point size) {
         super(context, size);
     }
 
@@ -123,5 +114,10 @@ public class BlurSquareTwoPasses extends BlurSquare {
     @Override
     public String getVerticalFragmentShaderCode() {
         return verFragmentShaderCode;
+    }
+
+    @Override
+    protected boolean isMultiPass() {
+        return true;
     }
 }
