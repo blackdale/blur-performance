@@ -7,16 +7,13 @@ public class BlurSquareTwoPassesLinearSampling extends BlurSquare {
 
     final private String vertexShaderCode =
             "#version 300 es\n"+
-            "precision highp float;\n" +
+            "precision mediump float;\n" +
             "in vec4 aPosition;\n" +
             "in vec2 aTexCoord;\n" +
             "out vec2 vTexCoord;\n" +
-            "uniform float uCount;\n" +
             "uniform float uRadius;\n" +
             "uniform float uWidth;\n" +
             "uniform float uHeight;\n" +
-            "out float vCount;\n" +
-            "out float vRadius;\n" +
             "out float vWidthOffset;\n" +
             "out float vHeightOffset;\n" +
 
@@ -26,16 +23,12 @@ public class BlurSquareTwoPassesLinearSampling extends BlurSquare {
             "    gl_Position = aPosition;\n" +
             "    vWidthOffset = uRadius / uWidth;\n" +
             "    vHeightOffset = uRadius / uHeight;\n" +
-            "    vCount = uCount;\n" +
-            "    vRadius = uRadius;\n" +
             "}";
 
     final private String horFragmentShaderCode =
             "#version 300 es\n"+
-            "precision highp float;\n" +
+            "precision mediump float;\n" +
             "uniform sampler2D uTexture;\n" +
-            "in float vCount;\n" +
-            "in float vRadius;\n" +
             "in vec2 vTexCoord;\n" +
             "in float vWidthOffset;\n" +
             "in float vHeightOffset;\n" +
@@ -62,12 +55,10 @@ public class BlurSquareTwoPassesLinearSampling extends BlurSquare {
 
     final private String verFragmentShaderCode =
             "#version 300 es\n"+
-            "precision highp float;\n" +
+            "precision mediump float;\n" +
             "uniform sampler2D uTexture;\n" +
 
             "in vec2 vTexCoord;\n" +
-            "in float vCount;\n" +
-            "in float vRadius;\n" +
             "in float vWidthOffset;\n" +
             "in float vHeightOffset;\n" +
 

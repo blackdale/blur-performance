@@ -23,12 +23,10 @@ public class BlurSquareTwoPasses extends BlurSquare {
             "in vec2 aTexCoord;\n" +
             "out vec2 vTexCoord;\n" +
             "out float vWeight[16];\n" +
-            "uniform float uCount;\n" +
+            "uniform float uMipLevel;\n" +
             "uniform float uRadius;\n" +
             "uniform float uWidth;\n" +
             "uniform float uHeight;\n" +
-            "out float vCount;\n" +
-            "out float vRadius;\n" +
             "out float vWidthOffset;\n" +
             "out float vHeightOffset;\n" +
 
@@ -38,7 +36,7 @@ public class BlurSquareTwoPasses extends BlurSquare {
             "    float sigma = (float(r) + 1.0) / sqrt(2.0 * log(255.0));\n" +
             "    float sumOfWeights = 0.0;\n" +
             "    for (int i = 0; i < r + 1; i++) {\n" +
-            "        vWeight[i] = (1.0 / sqrt(2.0 * 3.14 * pow(sigma, 2.0))) * exp(-pow(float(i), 2.0) / (2.0 * pow(sigma, 2.0)));\n" +
+            "        vWeight[i] = (1.0 / sqrt(2.0 * 3.14 * float(sigma * sigma))) * exp(-float(i * i) / (2.0 * float(sigma * sigma)));\n" +
             "        if (i == 0) {\n" +
             "            sumOfWeights += vWeight[i];\n" +
             "        } else {\n" +
@@ -57,16 +55,12 @@ public class BlurSquareTwoPasses extends BlurSquare {
             "    vWidthOffset = uRadius / uWidth;\n" +
             "    vHeightOffset = uRadius / uHeight;\n" +
             "    calculateWeights(" + MAX_BLUR_RADIUS_DEFAULT + ");\n" +
-            "    vCount = uCount;\n" +
-            "    vRadius = uRadius;\n" +
             "}";
 
     final private String horFragmentShaderCode =
             "#version 300 es\n"+
             "precision mediump float;\n" +
             "uniform sampler2D uTexture;\n" +
-            "in float vCount;\n" +
-            "in float vRadius;\n" +
             "in float vWeight[16];\n" +
             "in vec2 vTexCoord;\n" +
             "in float vWidthOffset;\n" +
@@ -93,8 +87,6 @@ public class BlurSquareTwoPasses extends BlurSquare {
             "uniform float saturation;\n" +
 
             "in vec2 vTexCoord;\n" +
-            "in float vCount;\n" +
-            "in float vRadius;\n" +
             "in float vWeight[16];" +
             "in float vWidthOffset;\n" +
             "in float vHeightOffset;\n" +

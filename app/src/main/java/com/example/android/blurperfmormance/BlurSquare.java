@@ -105,7 +105,7 @@ public abstract class BlurSquare {
         mHorizontalProgramData.mWidthHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uWidth");
         mHorizontalProgramData.mHeightHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uHeight");
         mHorizontalProgramData.mRadiusHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uRadius");
-        mHorizontalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uCount");
+        mHorizontalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uMipLevel");
         mHorizontalProgramData.mTextureHandle = GLES31.glGetUniformLocation(mHorizontalProgramData.mProgram, "uTexture");
 
         GLES31.glUseProgram(mVerticalProgramData.mProgram);
@@ -114,7 +114,7 @@ public abstract class BlurSquare {
         mVerticalProgramData.mWidthHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uWidth");
         mVerticalProgramData.mHeightHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uHeight");
         mVerticalProgramData.mRadiusHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uRadius");
-        mVerticalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uCount");
+        mVerticalProgramData.mMipMapHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uMipLevel");
         mVerticalProgramData.mTextureHandle = GLES31.glGetUniformLocation(mVerticalProgramData.mProgram, "uTexture");
     }
 

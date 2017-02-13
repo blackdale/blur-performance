@@ -135,7 +135,7 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
             float interpolationValue = getInterpolationValue();
 
             synchronized (mLock) {
-                mBlurSquare.draw(interpolationValue);
+                mBlurSquare.draw(/*interpolationValue*/1.0f);
             }
 
             printFPS();
@@ -149,7 +149,7 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
         float interpolationValue = (float)(currentTime - mAnimationStart) / (float)mAnimationDuration;
         if (interpolationValue > 1.0 && interpolationValue < 2.0)
             interpolationValue = 2.0f - interpolationValue;
-        else if (interpolationValue > 2.0) {
+        else if (interpolationValue >= 2.0) {
             mAnimationStart = System.currentTimeMillis();
             interpolationValue = 0.0f;
         }

@@ -11,12 +11,10 @@ public class BlurSquareMipmapLinearSampling extends BlurSquare {
             "in vec4 aPosition;\n" +
             "in vec2 aTexCoord;\n" +
             "out vec2 vTexCoord;\n" +
-            "uniform float uCount;\n" +
-            "uniform float uRadius;\n" +
+            "uniform float uMipLevel;\n" +
             "uniform float uWidth;\n" +
             "uniform float uHeight;\n" +
-            "out float vCount;\n" +
-            "out float vRadius;\n" +
+            "out float vMipLevel;\n" +
             "out float vWidthOffset;\n" +
             "out float vHeightOffset;\n" +
 
@@ -24,18 +22,16 @@ public class BlurSquareMipmapLinearSampling extends BlurSquare {
             "{\n" +
             "    vTexCoord = aTexCoord;\n" +
             "    gl_Position = aPosition;\n" +
-            "    vWidthOffset = pow(2.0, uCount) / uWidth;\n" +
-            "    vHeightOffset = pow(2.0, uCount) / uHeight;\n" +
-            "    vCount = uCount;\n" +
-            "    vRadius = uRadius;\n" +
+            "    vWidthOffset = pow(2.0, uMipLevel) / uWidth;\n" +
+            "    vHeightOffset = pow(2.0, uMipLevel) / uHeight;\n" +
+            "    vMipLevel = uMipLevel;\n" +
             "}";
 
     final private String horFragmentShaderCode =
             "#version 300 es\n"+
             "precision mediump float;\n" +
             "uniform sampler2D uTexture;\n" +
-            "in float vCount;\n" +
-            "in float vRadius;\n" +
+            "in float vMipLevel;\n" +
             "in vec2 vTexCoord;\n" +
             "in float vWidthOffset;\n" +
             "in float vHeightOffset;\n" +
@@ -63,8 +59,7 @@ public class BlurSquareMipmapLinearSampling extends BlurSquare {
             "uniform float saturation;\n" +
 
             "in vec2 vTexCoord;\n" +
-            "in float vCount;\n" +
-            "in float vRadius;\n" +
+            "in float vMipLevel;\n" +
             "in float vWidthOffset;\n" +
             "in float vHeightOffset;\n" +
 
@@ -76,10 +71,10 @@ public class BlurSquareMipmapLinearSampling extends BlurSquare {
             "    float weight[5] = float[]( 0.185471, 0.288322, 0.1035, 0.0147858, 0.000652313 );\n" +
             "    float offset[5] = float[]( 0.0, 1.42105, 3.31579, 5.21053, 7.10526 );\n" +
             "    for (int i = 1; i <= 4; i++) {\n" +
-            "       color += textureLod(uTexture, vTexCoord + vec2(0.0, offset[i] * vHeightOffset), vCount) * weight[i];\n" +
-            "       color += textureLod(uTexture, vTexCoord - vec2(0.0, offset[i] * vHeightOffset), vCount) * weight[i];\n" +
+            "       color += textureLod(uTexture, vTexCoord + vec2(0.0, offset[i] * vHeightOffset), vMipLevel) * weight[i];\n" +
+            "       color += textureLod(uTexture, vTexCoord - vec2(0.0, offset[i] * vHeightOffset), vMipLevel) * weight[i];\n" +
             "    }\n"+
-            "    color += textureLod(uTexture, vTexCoord, vCount) * weight[0];\n" +
+            "    color += textureLod(uTexture, vTexCoord, vMipLevel) * weight[0];\n" +
             "    glFragColor = color;\n" +
             "}";
 
