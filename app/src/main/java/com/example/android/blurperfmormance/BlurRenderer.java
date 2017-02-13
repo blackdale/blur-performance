@@ -155,8 +155,8 @@ public class BlurRenderer extends Thread implements TextureView.SurfaceTextureLi
             mAnimationStart = System.currentTimeMillis();
             interpolationValue = 0.0f;
         }
-//        return interpolationValue;
-        return 1.0f;
+        return interpolationValue;
+//        return 1.0f;
     }
 
     private void printFPS() {
