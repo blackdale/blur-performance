@@ -33,7 +33,7 @@ public class BlurSquareTwoPasses extends BlurSquare {
             "void calculateWeights(float aRadius)\n" +
             "{\n" +
             "    int r = int(aRadius);\n" +
-            "    float sigma = (float(r) + 1.0) / sqrt(2.0 * log(255.0));\n" +
+            "    float sigma = uRadius / 2.0;\n" +
             "    float sumOfWeights = 0.0;\n" +
             "    for (int i = 0; i < r + 1; i++) {\n" +
             "        vWeight[i] = (1.0 / sqrt(2.0 * 3.14 * float(sigma * sigma))) * exp(-float(i * i) / (2.0 * float(sigma * sigma)));\n" +
